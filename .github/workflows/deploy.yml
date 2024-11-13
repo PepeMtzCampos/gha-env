@@ -4,14 +4,14 @@ on:
     branches:
       - main
       - development
-env: #these will be available to all jobs
+env: #these will be available to all jobs https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
   MONGODB_DB_NAME: gha-demo
 jobs:
   test:
     env: #only available in this job
       MONGODB_CLUSTER_ADDRESS: cluster0.hu2mt.mongodb.net
-      MONGODB_USERNAME: pepemtzcampos
-      MONGODB_PASSWORD: tabiRClKUWO45c2y
+      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       PORT: 8080
     environment: testing
     runs-on: ubuntu-latest
