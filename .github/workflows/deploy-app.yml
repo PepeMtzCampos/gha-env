@@ -56,23 +56,23 @@ on:
         type: string
 jobs:
   deploy-app:
-    environment: ${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}
+    environment: ${{ inputs.environment != null && inputs.environment || github.event.inputs.environment }}
     env:
-      REPOSITORY: ${{ github.event_name != 'workflow_dispatch' && inputs.repository || github.event.inputs.repository }}
-      BRANCH: ${{ github.event_name != 'workflow_dispatch' && inputs.branch || github.event.inputs.branch }}
-      BUILD_NUMBER: ${{ github.event_name != 'workflow_dispatch' && inputs.build_number || github.event.inputs.build_number }}
+      REPOSITORY: ${{ inputs.repository != null && inputs.repository || github.event.inputs.repository }}
+      BRANCH: ${{ inputs.branch != null && inputs.branch || github.event.inputs.branch }}
+      BUILD_NUMBER: ${{ inputs.build_number != null && inputs.build_number || github.event.inputs.build_number }}
       ARTIFACTORY_URL: 'https://${{ vars.REGISTRY_URL }}'
       REGISTRY_URL: ${{ vars.REGISTRY_URL }}
-      ARTIFACT_FOLDER: ${{ vars.ARTIFACT_FOLDER }}${{ github.event_name != 'workflow_dispatch' && inputs.folder_suffix || github.event.inputs.folder_suffix }}
-      IMAGE_FOLDER: ${{ vars.IMAGE_FOLDER }}${{ github.event_name != 'workflow_dispatch' && inputs.folder_suffix || github.event.inputs.folder_suffix }}
-      ENVIRONMENT: ${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}
-      NAMESPACE: ${{ vars.ASMS }}-${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}
-      DEPLOYMENT_FILE: k8s-${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}-deployment.yaml
+      ARTIFACT_FOLDER: ${{ vars.ARTIFACT_FOLDER }}${{ inputs.folder_suffix != null && inputs.folder_suffix || github.event.inputs.folder_suffix }}
+      IMAGE_FOLDER: ${{ vars.IMAGE_FOLDER }}${{ inputs.folder_suffix != null && inputs.folder_suffix || github.event.inputs.folder_suffix }}
+      ENVIRONMENT: ${{ inputs.environment != null && inputs.environment || github.event.inputs.environment }}
+      NAMESPACE: ${{ vars.ASMS }}-${{ inputs.environment != null && inputs.environment || github.event.inputs.environment }}
+      DEPLOYMENT_FILE: k8s-${{ inputs.environment != null && inputs.environment || github.event.inputs.environment }}-deployment.yaml
     runs-on: ubuntu-latest
     steps:
-      - name: Printing github.event_name
+      - name: Printing vars
         run: |
-          echo "${{ github.event_name }}"
+          echo "${{ toJson(vars) }}"
       - name: Printing traceability
         run: |
           echo "Running in ${{ github.repository }}"
