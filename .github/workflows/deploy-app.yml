@@ -73,6 +73,17 @@ jobs:
       - name: Printing traceability
         run: |
           echo "Running in ${{ github.repository }}"
+      - name: Printing environment
+        run: printenv
+      - name: Printing inputs
+        run: |
+          echo "Running in ${{ toJson(inputs) }}"
+      - name: Printing github.event.inputs
+        run: |
+          echo "Running in ${{ toJson(github.event.inputs) }}"          
+      - name: Printing traceability
+        run: |
+          echo "Running in ${{ github.repository }}"          
       - name: Printing env variables
         run: |
           echo "REPOSITORY: ${{env.REPOSITORY}}"
