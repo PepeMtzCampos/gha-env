@@ -1,0 +1,87 @@
+name: Deploy App
+on: 
+  workflow_call:
+    inputs:
+      repository:
+        description: GitHub repository
+        required: true
+        default: ''
+        type: string
+      branch:
+        description: Branch to build
+        required: true
+        default: ''
+        type: string      
+      build_number:
+        description: Build Number
+        required: true
+        default: ''
+        type: string
+      environment:
+        description: Environment to build
+        required: true
+        default: dev
+        type: string
+      folder_suffix:
+        description: Folder to store artifact and image
+        required: true
+        default: ''
+        type: string
+  workflow_dispatch:
+    inputs:
+      repository:
+        description: GitHub repository
+        required: true
+        default: ''
+        type: string
+      branch:
+        description: Branch to build
+        required: true
+        default: ''
+        type: string
+      build_number:
+        description: Build Number
+        required: true
+        default: ''
+        type: string
+      environment:
+        description: Environment to build
+        required: true
+        default: dev
+        type: string
+      folder_suffix:
+        description: Folder to store artifact and image
+        required: true
+        default: ''
+        type: string
+jobs:
+  deploy-app:
+    environment: ${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}
+    env:
+      REPOSITORY: ${{ github.event_name != 'workflow_dispatch' && inputs.repository || github.event.inputs.repository }}
+      BRANCH: ${{ github.event_name != 'workflow_dispatch' && inputs.branch || github.event.inputs.branch }}
+      BUILD_NUMBER: ${{ github.event_name != 'workflow_dispatch' && inputs.build_number || github.event.inputs.build_number }}
+      ARTIFACTORY_URL: 'https://${{ vars.REGISTRY_URL }}'
+      REGISTRY_URL: ${{ vars.REGISTRY_URL }}
+      ARTIFACT_FOLDER: ${{ vars.ARTIFACT_FOLDER }}${{ github.event_name != 'workflow_dispatch' && inputs.folder_suffix || github.event.inputs.folder_suffix }}
+      IMAGE_FOLDER: ${{ vars.IMAGE_FOLDER }}${{ github.event_name != 'workflow_dispatch' && inputs.folder_suffix || github.event.inputs.folder_suffix }}
+      ENVIRONMENT: ${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}
+      NAMESPACE: ${{ vars.ASMS }}-${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}
+      DEPLOYMENT_FILE: k8s-${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}-deployment.yaml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Printing traceability
+        run: |
+          echo "Running in ${{ github.repository }}"
+      - name: Printing env variables
+        run: |
+          echo "REPOSITORY: ${{env.REPOSITORY}}"
+          echo "BRANCH: ${{env.BRANCH}}"
+          echo "BUILD_NUMBER: ${{env.BUILD_NUMBER}}" 
+          echo "ARTIFACTORY_URL: ${{env.ARTIFACTORY_URL}}"
+          echo "REGISTRY_URL: ${{env.REGISTRY_URL}}"
+          echo "ARTIFACT_FOLDER: ${{env.ARTIFACT_FOLDER}}"
+          echo "IMAGE_FOLDER: ${{env.IMAGE_FOLDER}}"
+          echo "ENVIRONMENT: ${{env.ENVIRONMENT}}"
+          echo "NAMESPACE: ${{env.NAMESPACE}}"
+          echo "DEPLOYMENT_FILE: ${{env.DEPLOYMENT_FILE}}"
