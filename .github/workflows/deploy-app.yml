@@ -70,6 +70,9 @@ jobs:
       DEPLOYMENT_FILE: k8s-${{ github.event_name != 'workflow_dispatch' && inputs.environment || github.event.inputs.environment }}-deployment.yaml
     runs-on: ubuntu-latest
     steps:
+      - name: Printing github.event_name
+        run: |
+          echo "${{ github.event_name }}"
       - name: Printing traceability
         run: |
           echo "Running in ${{ github.repository }}"
